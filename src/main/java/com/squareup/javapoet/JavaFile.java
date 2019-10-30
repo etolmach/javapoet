@@ -55,6 +55,7 @@ public final class JavaFile {
     }
   };
 
+  public final CodeBlock licence;
   public final CodeBlock fileComment;
   public final String packageName;
   public final TypeSpec typeSpec;
@@ -63,6 +64,7 @@ public final class JavaFile {
   private final String indent;
 
   private JavaFile(Builder builder) {
+    this.licence = builder.licence.build();
     this.fileComment = builder.fileComment.build();
     this.packageName = builder.packageName;
     this.typeSpec = builder.typeSpec;
@@ -137,6 +139,10 @@ public final class JavaFile {
 
     if (!fileComment.isEmpty()) {
       codeWriter.emitComment(fileComment);
+    }
+
+    if (!licence.isEmpty()) {
+      codeWriter.emitMultilineComment(licence);
     }
 
     if (!packageName.isEmpty()) {
@@ -224,6 +230,7 @@ public final class JavaFile {
   public static final class Builder {
     private final String packageName;
     private final TypeSpec typeSpec;
+    private final CodeBlock.Builder licence = CodeBlock.builder();
     private final CodeBlock.Builder fileComment = CodeBlock.builder();
     private final Set<String> staticImports = new TreeSet<>();
     private boolean skipJavaLangImports;
@@ -232,6 +239,11 @@ public final class JavaFile {
     private Builder(String packageName, TypeSpec typeSpec) {
       this.packageName = packageName;
       this.typeSpec = typeSpec;
+    }
+
+    public Builder addLicence(String format, Object... args) {
+      this.licence.add(format, args);
+      return this;
     }
 
     public Builder addFileComment(String format, Object... args) {

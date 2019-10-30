@@ -143,17 +143,30 @@ final class CodeWriter {
     }
   }
 
-  public void emitJavadoc(CodeBlock javadocCodeBlock) throws IOException {
-    if (javadocCodeBlock.isEmpty()) return;
+  public void emitMultilineComment(CodeBlock codeBlock, String header, String footer,
+                                   boolean javadoc) throws IOException {
+    if (codeBlock.isEmpty()) return;
 
-    emit("/**\n");
-    javadoc = true;
+    emit(header);
+    this.javadoc = javadoc;
     try {
-      emit(javadocCodeBlock);
+      emit(codeBlock);
     } finally {
-      javadoc = false;
+      this.javadoc = false;
     }
-    emit(" */\n");
+    emit(footer);
+  }
+
+  public void emitMultilineComment(CodeBlock codeBlock, boolean prefixed) throws IOException {
+    emitMultilineComment(codeBlock, "/*\n", " */\n", prefixed);
+  }
+
+  public void emitMultilineComment(CodeBlock codeBlock) throws IOException {
+    emitMultilineComment(codeBlock, true);
+  }
+
+  public void emitJavadoc(CodeBlock javadocCodeBlock) throws IOException {
+    emitMultilineComment(javadocCodeBlock, "/**\n", " */\n", true);
   }
 
   public void emitAnnotations(List<AnnotationSpec> annotations, boolean inline) throws IOException {

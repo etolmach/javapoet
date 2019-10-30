@@ -655,6 +655,48 @@ public final class JavaFileTest {
         + "}\n");
   }
 
+  @Test public void fileLicence() throws Exception {
+    String licence = "Copyright (C) $L Square, Inc.\n"
+        + "\n"
+        + "Licensed under the Apache License, Version 2.0 (the \n"
+        + "you may not use this file except in compliance with \n"
+        + "You may obtain a copy of the License at\n"
+        + "\n"
+        + "http://www.apache.org/licenses/LICENSE-2.0\n"
+        + "\n"
+        + "Unless required by applicable law or agreed to in wr\n"
+        + "distributed under the License is distributed on an \"\n"
+        + "WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either\n"
+        + "See the License for the specific language governing \n"
+        + "limitations under the License.\n";
+
+    String source = JavaFile.builder("com.squareup.tacos",
+                                     TypeSpec.classBuilder("Taco").build())
+                            .addLicence(licence, "2015")
+                            .build()
+                            .toString();
+    assertThat(source).isEqualTo(""
+        + "/*\n"
+        + " * Copyright (C) 2015 Square, Inc.\n"
+        + " *\n"
+        + " * Licensed under the Apache License, Version 2.0 (the \n"
+        + " * you may not use this file except in compliance with \n"
+        + " * You may obtain a copy of the License at\n"
+        + " *\n"
+        + " * http://www.apache.org/licenses/LICENSE-2.0\n"
+        + " *\n"
+        + " * Unless required by applicable law or agreed to in wr\n"
+        + " * distributed under the License is distributed on an \"\n"
+        + " * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either\n"
+        + " * See the License for the specific language governing \n"
+        + " * limitations under the License.\n"
+        + " */\n"
+        + "package com.squareup.tacos;\n"
+        + "\n"
+        + "class Taco {\n"
+        + "}\n");
+  }
+
   @Test public void packageClassConflictsWithNestedClass() throws Exception {
     String source = JavaFile.builder("com.squareup.tacos",
         TypeSpec.classBuilder("Taco")
